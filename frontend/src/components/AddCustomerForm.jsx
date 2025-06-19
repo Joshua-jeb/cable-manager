@@ -1,42 +1,28 @@
 import React, { useState } from 'react';
 import API from '../api';
 
-const AddCustomerForm = ({ area, onCustomerAdded }) => {
+const AddCustomerForm = ({ areaId }) => {
   const [name, setName] = useState('');
-  const [setTopBoxNumber, setSetTopBoxNumber] = useState('');
+  const [contact, setContact] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!area) return alert('Please select an area first.');
-
     try {
-      const response = await API.post('/customers', {
-        name,
-        setTopBoxNumber,
-        areaId: area._id,
-        status: 'not recharged',
-      });
-
-      if (response.status === 201) {
-        console.log('Customer added:', response.data);
-
-        setName('');
-        setSetTopBoxNumber('');
-        onCustomerAdded(); // ✅ triggers parent to reload customer list
-      } else {
-        alert('Customer not saved!');
-      }
+      await API.post('/customers', { name, contact, areaId });
+      setName('');
+      setContact('');
+      alert('Customer added successfully');
     } catch (err) {
-      alert('Error adding customer!');
-      console.error(err.response?.data || err.message);
+      alert('Failed to add customer');
+      console.error(err);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
+    <form onSubmit={handleSubmit} style={{ marginTop: '10px' }}>
       <input
         type="text"
-        placeholder="Customer name"
+        placeholder="Customer Name"
         value={name}
         onChange={(e) => setName(e.target.value)}
         required
@@ -44,13 +30,13 @@ const AddCustomerForm = ({ area, onCustomerAdded }) => {
       />
       <input
         type="text"
-        placeholder="Set Top Box number"
-        value={setTopBoxNumber}
-        onChange={(e) => setSetTopBoxNumber(e.target.value)}
+        placeholder="Contact"
+        value={contact}
+        onChange={(e) => setContact(e.target.value)}
         required
         style={{ marginRight: '10px' }}
       />
-      <button type="submit">Add Customer</button>
+      <button type="submit" style={{ padding: '5px 10px' }}>Add Customer</button>
     </form>
   );
 };
