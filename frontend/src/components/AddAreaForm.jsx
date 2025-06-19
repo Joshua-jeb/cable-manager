@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import API from '../api';
+import API from '../api'; // axios instance with baseURL set from .env
 
 const AddAreaForm = ({ onAreaAdded }) => {
   const [name, setName] = useState('');
@@ -9,12 +9,13 @@ const AddAreaForm = ({ onAreaAdded }) => {
     if (!name.trim()) return;
 
     try {
-      await API.post('/areas', { name });
+      const response = await API.post('/areas', { name });
+      console.log("Area added:", response.data);
       setName('');
-      onAreaAdded(); // refresh area list
+      onAreaAdded(); // callback to refresh list
     } catch (err) {
       alert('Error adding area');
-      console.error(err);
+      console.error("AddAreaForm error:", err);
     }
   };
 
@@ -26,8 +27,28 @@ const AddAreaForm = ({ onAreaAdded }) => {
         value={name}
         onChange={(e) => setName(e.target.value)}
         required
+        style={{
+          padding: '10px',
+          fontSize: '16px',
+          marginRight: '10px',
+          borderRadius: '5px',
+          border: '1px solid #ccc'
+        }}
       />
-      <button type="submit">Add Area</button>
+      <button
+        type="submit"
+        style={{
+          padding: '10px 20px',
+          fontSize: '16px',
+          backgroundColor: '#007bff',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '5px',
+          cursor: 'pointer'
+        }}
+      >
+        Add Area
+      </button>
     </form>
   );
 };
