@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import API from './api';
-import AddCustomerForm from './components/AddCustomerForm';
+import AddAreaForm from './components/AddAreaForm';
 
 function App() {
   const [areas, setAreas] = useState([]);
-  const [selectedArea, setSelectedArea] = useState(null);
 
-  useEffect(() => {
-    const fetchAreas = async () => {
+  const fetchAreas = async () => {
+    try {
       const res = await API.get('/areas');
       setAreas(res.data);
-    };
+    } catch (err) {
+      console.error("Failed to fetch areas", err);
+    }
+  };
+
+  useEffect(() => {
     fetchAreas();
   }, []);
 
@@ -18,15 +22,16 @@ function App() {
     <div style={{ padding: '20px' }}>
       <h2>📡 Cable Manager</h2>
 
-      <h3>Select Area:</h3>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '20px' }}>
+      <AddAreaForm onAreaAdded={fetchAreas} />
+
+      <h3>Areas:</h3>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
         {areas.map((area) => (
           <button
             key={area._id}
-            onClick={() => setSelectedArea(area)}
             style={{
               padding: '10px 20px',
-              backgroundColor: selectedArea?._id === area._id ? '#007bff' : '#ccc',
+              backgroundColor: '#007bff',
               color: '#fff',
               border: 'none',
               borderRadius: '5px',
@@ -37,13 +42,6 @@ function App() {
           </button>
         ))}
       </div>
-
-      {selectedArea && (
-        <div>
-          <h3>➕ Add Customer for {selectedArea.name}</h3>
-          <AddCustomerForm areaId={selectedArea._id} />
-        </div>
-      )}
     </div>
   );
 }
