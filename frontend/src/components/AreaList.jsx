@@ -5,16 +5,17 @@ const AreaList = () => {
   const [areas, setAreas] = useState(null); // Initially null
 
   useEffect(() => {
-    API.get('/areas')
-      .then(res => {
-        console.log("API response:", res.data); // 👈 This will show the real format
-        setAreas(res.data);
-      })
-      .catch(err => {
-        console.error("Error fetching areas:", err);
-        setAreas([]); // Set empty array on error to prevent crash
-      });
-  }, []);
+  API.get('/areas')
+    .then(res => {
+      console.log("API response:", res.data);
+      setAreas(res.data); // Make sure res.data is actually an array!
+    })
+    .catch(err => {
+      console.error("API error:", err);
+      setAreas([]); // fallback to avoid crash
+    });
+}, []);
+
 
   return (
     <div>
